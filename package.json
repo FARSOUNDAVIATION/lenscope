@@ -37,7 +37,7 @@
     "fzf"
   ],
   "extensionKind": [
-    "ui"
+    "workspace"
   ],
   "activationEvents": [
     "onCommand:lenscope.live_grep",
@@ -66,17 +66,17 @@
     "keybindings": [
       {
         "command": "lenscope.live_grep",
-        "key": "cmd+shift+l",
+        "key": "cmd+l",
         "when": "editorTextFocus"
       },
       {
         "command": "lenscope.find_files",
-        "key": "cmd+shift+f",
+        "key": "cmd+f",
         "when": "editorTextFocus"
       },
       {
         "command": "lenscope.current_buffer_fuzzy_find",
-        "key": "cmd+shift+c",
+        "key": "cmd+c",
         "when": "editorTextFocus"
       }
     ]
@@ -96,7 +96,7 @@
   },
   "devDependencies": {
     "@types/node": "26.1.1",
-    "@types/vscode": "1.120.0",
+    "@types/vscode": "^1.120.0",
     "@vitest/coverage-v8": "4.1.10",
     "@vscode/test-electron": "3.0.0",
     "@vscode/vsce": "3.9.2",
