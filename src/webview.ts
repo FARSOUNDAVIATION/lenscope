@@ -1,23 +1,128 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+function getWebviewUris(context: vscode.ExtensionContext, webview: vscode.Webview) {
+    const scriptUri = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'media', 'webview.js'))
+    );
+    const styleUri = webview.asWebviewUri(
+        vscode.Uri.file(path.join(context.extensionPath, 'media', 'webview.css'))
+    );
+    const iconBase = webview.asWebviewUri(
+        vscode.Uri.joinPath(context.extensionUri, "media", "icons")
+    );
+    return { scriptUri, styleUri, iconBase };
+}
+
+export function getWebviewContentForFindFiles(
+    context: vscode.ExtensionContext,
+    webview: vscode.Webview
+): string {
+    const { scriptUri, styleUri, iconBase } = getWebviewUris(context, webview);
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <script>
+          const ICON_BASE = "${iconBase}";
+          const LENSCOPE_MODE = "find_files";
+        </script>
+        <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="Content-Security-Policy"
+                content="default-src 'none'; img-src ${webview.cspSource} https:;
+                script-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline';">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="${styleUri}" rel="stylesheet" />
+            <title>Lenscope</title>
+        </head>
+        <body>
+            <div id="lenscope-container">
+                <div id="search-bar">
+                    <div class="pane-header">
+                        <span>Find Files</span>
+                    </div>
+                    <div class="search-input-row">
+                        <span class="search-prompt">&gt;</span>
+                        <input id="search-input" type="text" autofocus />
+                        <span id="result-count">0/0</span>
+                    </div>
+                </div>
+                <div id="main">
+                    <div id="results">
+                        <div class="pane-header">
+                            <span>Files</span>
+                        </div>
+                        <div id="results-list">
+                            <div class="placeholder">Loading files...</div>
+                        </div>
+                    </div>
+                    <div id="preview">
+                        <div class="pane-header">
+                            <span>Preview</span>
+                        </div>
+                        <pre id="preview-code" class="preview"></pre>
+                    </div>
+                </div>
+            </div>
+            <script src="${scriptUri}"></script>
+        </body>
+        </html>
+    `;
+}
+
+export function getWebviewContentForCurrentBufferFuzzyFind(
+    context: vscode.ExtensionContext,
+    webview: vscode.Webview
+): string {
+    const { scriptUri, styleUri, iconBase } = getWebviewUris(context, webview);
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <script>
+          const ICON_BASE = "${iconBase}";
+          const LENSCOPE_MODE = "current_buffer_fuzzy_find";
+        </script>
+        <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="Content-Security-Policy"
+                content="default-src 'none'; img-src ${webview.cspSource} https:;
+                script-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline';">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="${styleUri}" rel="stylesheet" />
+            <title>Lenscope</title>
+        </head>
+        <body>
+            <div id="lenscope-container" class="buffer-mode">
+                <div id="search-bar">
+                    <div class="pane-header">
+                        <span>Current Buffer Fuzzy</span>
+                    </div>
+                    <div class="search-input-row">
+                        <span class="search-prompt">&gt;</span>
+                        <input id="search-input" type="text" autofocus />
+                        <span id="result-count">0/0</span>
+                    </div>
+                </div>
+                <div id="main">
+                    <div id="results">
+                        <div id="results-list">
+                            <div class="placeholder">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="${scriptUri}"></script>
+        </body>
+        </html>
+    `;
+}
+
 export function getWebviewContent(
     context: vscode.ExtensionContext,
     webview: vscode.Webview
 ): string {
 
-    const scriptUri = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'media', 'webview.js'))
-    );
-
-    
-    const styleUri = webview.asWebviewUri(
-        vscode.Uri.file(path.join(context.extensionPath, 'media', 'webview.css'))
-    );
-
-    const iconBase = webview.asWebviewUri(
-      vscode.Uri.joinPath(context.extensionUri, "media", "icons")
-    );
+    const { scriptUri, styleUri, iconBase } = getWebviewUris(context, webview);
 
 
     return `
@@ -30,7 +135,7 @@ export function getWebviewContent(
         <head>
             <meta charset="UTF-8" />
             <meta http-equiv="Content-Security-Policy"
-                content="default-src 'none'; img-src ${webview.cspSource} https:; 
+                content="default-src 'none'; img-src ${webview.cspSource} https:;
                 script-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline';">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <link href="${styleUri}" rel="stylesheet" />
@@ -83,7 +188,7 @@ function getHtmlTemplateForLiveGrep(scriptUri: vscode.Uri) {
         <!-- LIVE GREP -->
         <div id="search-bar">
             <div class="pane-header">
-                <span>live grep</span>
+                <span>Live Grep</span>
             </div>
             <div class="search-input-row">
                 <span class="search-prompt">&gt;</span>
@@ -98,7 +203,7 @@ function getHtmlTemplateForLiveGrep(scriptUri: vscode.Uri) {
             <!-- RESULTS -->
             <div id="results">
                 <div class="pane-header">
-                    <span>results</span>
+                    <span>Results</span>
                 </div>
                 <div id="results-list">
                     <div class="placeholder">No results yet</div>
@@ -108,7 +213,7 @@ function getHtmlTemplateForLiveGrep(scriptUri: vscode.Uri) {
             <!-- GREP PREVIEW -->
             <div id="preview">
                 <div class="pane-header">
-                    <span>grep preview</span>
+                    <span>Grep Preview</span>
                 </div>
                 <!--  <pre><code id="preview-code"></code></pre> -->
                 <pre id="preview-code" class="preview"></pre>
@@ -130,7 +235,7 @@ function getHtmlTemplateForFindFiles(scriptUri: vscode.Uri) {
         `;
 }
 
-// HTML template for the find files interface
+// HTML template for the current buffer interface
 function getHtmlTemplateForCurrentBufferFuzzyFind(scriptUri: vscode.Uri) {
     return `
         `;
