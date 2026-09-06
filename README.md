@@ -1,11 +1,7 @@
 # Lenscope
 Gaze deeply into unknown regions using the power of the moon 🔭.
 
->[!IMPORTANT]
->
-> **Lenscope is currently a work in progress.**
->
-> The project is still being developed and features, behaviour may change without notice.
+>[!NOTE]
 >
 > **Contributions are currently not being accepted.** If you'd like to
 > experiment with Lenscope or customise it for your own use, you're welcome to
@@ -39,7 +35,9 @@ VS Code [>v1.120.0](https://github.com/microsoft/vscode/releases/tag/1.120.0) or
 
 ### Required dependencies
 
-- [ripgrep](https://github.com/BurntSushi/ripgrep) is required for `live_grep` and is the first priority for `find_files` features.
+- [ripgrep](https://github.com/BurntSushi/ripgrep) is required for `live_grep` and `find_files`.
+
+Lenscope will auto-discover `rg` from common install locations. If your install is in a non-standard path, set `lenscope.ripgrepPath` in VS Code settings to the absolute path of the `rg` binary.
 
 
 ### Installing ripgrep
@@ -162,11 +160,11 @@ The committed package-lock.json is the source of truth for dependency versions.
 Lenscope built-in features/functions soo far;
 
 
-| Functions             | Description                                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `live_grep`   | Search for a string in your current working directory and get results live as you type, respects .gitignore    ✅        |
-| `find_files`  | Lists files in your current working directory, respects .gitignore ❌
-| `current_buffer_fuzzy_find` | Live fuzzy search inside of the currently open buffer ❌
+| Function | Keybinding (Mac / Win+Linux) | Description |
+| --- | --- | --- |
+| `live_grep` | `cmd+shift+l` / `ctrl+shift+l` | Search for a string across your workspace live as you type, respects `.gitignore` ✅ |
+| `find_files` | `cmd+shift+alt+f` / `ctrl+shift+alt+f` | Fuzzy search all files in your workspace, respects `.gitignore` ✅ |
+| `current_buffer_fuzzy_find` | `cmd+shift+c` / `ctrl+shift+c` | Fuzzy search lines in the currently open file ✅ |
 
 
 ## License
