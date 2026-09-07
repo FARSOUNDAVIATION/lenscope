@@ -169,7 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
-            vscode.window.showErrorMessage('No active editor to search');
+            vscode.window.showErrorMessage('No active buffer to search');
             return;
         }
 
@@ -344,7 +344,7 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.window.showErrorMessage(`Failed to open file: ${msg.file}`);
                 }
             }
-            
+
         });
     });
 
@@ -452,7 +452,7 @@ function startRipgrepSearch(
 }
 
 function parseGrepLine(line: string, workspacePath: string): GrepResult | null {
-    const match = line.match(/^(.+?):(\d+)(?::\d+)?:(.*)$/);
+    const match = line.replace(/\r$/, "").match(/^(.+?):(\d+)(?::\d+)?:(.*)$/);
     if (!match) {return null;}
 
     let [, file, lineNum, text] = match;
@@ -541,8 +541,8 @@ function startRipgrepFileList(
 // file preview
 async function readFilePreview(file: string, lineNum: number): Promise<string> {
     try {
-        const start = Math.max(1, lineNum - 10);
-        const end = lineNum + 10;
+        const start = Math.max(1, lineNum - 40);
+        const end = lineNum + 80;
         const stream = fs.createReadStream(file, { encoding: "utf8" });
         const reader = readline.createInterface({
             input: stream,
